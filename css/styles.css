@@ -250,6 +250,60 @@ body {
     background-color: var(--mdc-theme-primary-dark, #2c3b42);
 }
 
+/* Botão de instalação */
+.install-container {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    animation: fadeInOut 10s forwards;
+}
+
+.install-button {
+    background-color: var(--mdc-theme-primary) !important;
+    color: white !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: 0.2px !important;
+    padding: 0 16px !important;
+    height: 44px !important;
+    border-radius: 22px !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+    white-space: nowrap !important;
+}
+
+.install-button .mdc-button__icon {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+.install-button:hover {
+    background-color: var(--mdc-theme-primary-dark, #2c3b42) !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
+    transform: translateY(-1px);
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+        visibility: hidden;
+    }
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .preview-area {
@@ -273,5 +327,16 @@ body {
 @media (max-width: 480px) {
     .preview-area {
         min-height: 40vh;
+    }
+    
+    .install-container {
+        top: auto;
+        bottom: 24px;
+        right: 24px;
+    }
+    
+    .install-button {
+        height: 48px !important;
+        border-radius: 24px !important;
     }
 } 

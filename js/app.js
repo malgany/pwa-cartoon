@@ -252,6 +252,44 @@ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.
 // Variável para armazenar o evento de instalação
 let deferredPrompt;
 
+// Função para mostrar o botão de instalação
+function showInstallButton() {
+    const installContainer = document.getElementById('install-container');
+    if (installContainer) {
+        installContainer.classList.remove('hidden');
+        
+        // Configura o botão de instalação
+        const installButton = document.getElementById('install-button');
+        if (installButton) {
+            // Inicializa o ripple do Material Design
+            new mdc.ripple.MDCRipple(installButton);
+            
+            // Adiciona o evento de clique
+            installButton.addEventListener('click', async () => {
+                // Esconde o botão de instalação
+                installContainer.classList.add('hidden');
+                
+                // Mostra o prompt de instalação
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    
+                    // Espera a resposta do usuário
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`👤 [Frontend] Usuário ${outcome === 'accepted' ? 'aceitou' : 'recusou'} a instalação`);
+                    
+                    // Limpa o evento
+                    deferredPrompt = null;
+                }
+            });
+        }
+        
+        // Esconde o botão após 10 segundos
+        setTimeout(() => {
+            installContainer.classList.add('hidden');
+        }, 10000);
+    }
+}
+
 // Detecta se o app pode ser instalado
 window.addEventListener('beforeinstallprompt', (e) => {
     // Previne o comportamento padrão
@@ -260,22 +298,25 @@ window.addEventListener('beforeinstallprompt', (e) => {
     // Armazena o evento para uso posterior
     deferredPrompt = e;
     
-    // Aqui você poderia mostrar um botão ou banner de instalação
-    console.log('O app está disponível para instalação');
-    
-    // Exemplo: mostrar um snackbar informando que o app pode ser instalado
-    showSnackbar('Toque em "Instalar" para adicionar o SnapToon à sua tela inicial');
+    // Mostra o botão de instalação automaticamente
+    showInstallButton();
 });
 
 // Detecta quando o app é instalado
 window.addEventListener('appinstalled', () => {
-    console.log('SnapToon instalado com sucesso!');
+    console.log('✅ [Frontend] SnapToon instalado com sucesso!');
+    
+    // Esconde o botão de instalação
+    const installContainer = document.getElementById('install-container');
+    if (installContainer) {
+        installContainer.classList.add('hidden');
+    }
     
     // Limpa a referência
     deferredPrompt = null;
     
     // Mostra uma mensagem de confirmação
-    showSnackbar('SnapToon foi instalado com sucesso!');
+    showSnackbar('SnapToon foi instalado com sucesso! 🎉');
 });
 
 // Função para obter a imagem em cartoon da API
