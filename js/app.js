@@ -93,7 +93,7 @@ function uploadImage(imageData) {
     showSnackbar('Enviando imagem...');
     
     // URL da API - ajuste conforme necessário
-    const apiUrl = 'http://api-cartoon-production.up.railway.app/upload-image';
+    const apiUrl = 'https://api-cartoon-production.up.railway.app/upload-image';
     
     // Enviar para a API
     return fetch(apiUrl, {
@@ -309,7 +309,7 @@ function getCartoonImage(imageId) {
     toggleButtonsState(false);
     
     // URL da API - ajuste conforme necessário
-    const apiUrl = 'http://api-cartoon-production.up.railway.app/get-cartoon';
+    const apiUrl = 'https://api-cartoon-production.up.railway.app/get-cartoon';
     
     // Enviar para a API
     return fetch(apiUrl, {
