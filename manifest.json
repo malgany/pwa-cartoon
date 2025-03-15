@@ -1,0 +1,44 @@
+{
+    "name": "SnapToon",
+    "short_name": "SnapToon",
+    "description": "Transforme o Mundo em Cartoon! Converta suas fotos em desenhos animados.",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#445963",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "images/icons/icon-192x192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "images/icons/icon-512x512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "images/screenshot1.jpg",
+            "type": "image/jpg",
+            "sizes": "540x720"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Câmera",
+            "url": "/index.html?action=camera",
+            "description": "Abrir câmera para criar cartoon"
+        },
+        {
+            "name": "Galeria",
+            "url": "/index.html?action=gallery",
+            "description": "Ver galeria de cartoons"
+        }
+    ],
+    "categories": ["photo", "utility", "entertainment"]
+} 

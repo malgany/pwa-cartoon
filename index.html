@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#445963">
+    <meta name="description" content="SnapToon - Transforme o Mundo em Cartoon!">
+    <title>SnapToon</title>
+    <!-- Material Design Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Material Design Web CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <!-- Roboto Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png">
+</head>
+<body class="mdc-typography">
+    <div class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-image">
+                <img src="images/home.png" alt="SnapToon - Transforme o Mundo em Cartoon!">
+            </div>
+            <div class="splash-text">
+                <h1 class="mdc-typography--headline4">SnapToon</h1>
+                <p class="mdc-typography--subtitle1">Transforme o Mundo em Cartoon!</p>
+            </div>
+            <div class="splash-button">
+                <button class="mdc-fab mdc-fab--extended" id="get-started-button">
+                    <div class="mdc-fab__ripple"></div>
+                    <span class="material-icons mdc-fab__icon">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo principal que será mostrado após o botão ser clicado -->
+    <div class="main-content hidden">
+        <div class="app-container">
+            <!-- Área de visualização/preview -->
+            <div class="preview-area">
+                <div class="preview-container">
+                    <img src="images/home.png" alt="SnapToon" class="preview-image">
+                </div>
+            </div>
+            
+            <!-- Botões de ação -->
+            <div class="action-buttons">
+                <div class="button-container">
+                    <!-- Botão da Câmera -->
+                    <button class="mdc-fab action-button camera-button" id="camera-button">
+                        <div class="mdc-fab__ripple"></div>
+                        <span class="material-icons mdc-fab__icon">photo_camera</span>
+                    </button>
+                    <p class="button-label">Câmera</p>
+                </div>
+                
+                <div class="button-container">
+                    <!-- Botão da Galeria -->
+                    <button class="mdc-fab action-button gallery-button" id="gallery-button">
+                        <div class="mdc-fab__ripple"></div>
+                        <span class="material-icons mdc-fab__icon">photo_library</span>
+                    </button>
+                    <p class="button-label">Galeria</p>
+                </div>
+            </div>
+            
+            <!-- Input de arquivo oculto para a câmera -->
+            <input type="file" id="camera-input" accept="image/*" capture="camera" class="hidden">
+        </div>
+    </div>
+    
+    <!-- Material Design JS -->
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <!-- App JS -->
+    <script src="js/app.js"></script>
+    <script>
+        // Função simplificada para mostrar mensagens
+        function showSnackbar(message) {
+            console.log(message);
+            // Se o MDC já estiver carregado, usa o componente Snackbar
+            if (typeof mdc !== 'undefined' && mdc.snackbar) {
+                let snackbarContainer = document.querySelector('.mdc-snackbar');
+                
+                if (!snackbarContainer) {
+                    snackbarContainer = document.createElement('div');
+                    snackbarContainer.className = 'mdc-snackbar';
+                    
+                    const snackbarSurface = document.createElement('div');
+                    snackbarSurface.className = 'mdc-snackbar__surface';
+                    
+                    const snackbarLabel = document.createElement('div');
+                    snackbarLabel.className = 'mdc-snackbar__label';
+                    snackbarLabel.setAttribute('role', 'status');
+                    snackbarLabel.setAttribute('aria-live', 'polite');
+                    
+                    snackbarSurface.appendChild(snackbarLabel);
+                    snackbarContainer.appendChild(snackbarSurface);
+                    document.body.appendChild(snackbarContainer);
+                }
+                
+                const snackbar = new mdc.snackbar.MDCSnackbar(snackbarContainer);
+                snackbarContainer.querySelector('.mdc-snackbar__label').textContent = message;
+                snackbar.open();
+            } else {
+                // Fallback simples se o MDC não estiver carregado
+                alert(message);
+            }
+        }
+        
+        // Inicializa componentes Material Design
+        document.querySelectorAll('.mdc-button, .mdc-fab').forEach(button => {
+            mdc.ripple.MDCRipple.attachTo(button);
+        });
+        
+        // Botão para avançar da tela de boas-vindas para o conteúdo principal
+        document.getElementById('get-started-button').addEventListener('click', function() {
+            document.querySelector('.splash-screen').classList.add('hidden');
+            document.querySelector('.main-content').classList.remove('hidden');
+        });
+        
+        // O listener do botão da câmera foi removido daqui, pois já existe no arquivo app.js
+        // Isso estava causando o problema de abertura dupla da câmera
+        
+        // Registrando o Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => {
+                        console.log('Service Worker registrado com sucesso:', reg);
+                        
+                        // Verificar se há uma nova versão do Service Worker
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            console.log('Nova versão do Service Worker encontrada!');
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Há uma nova versão disponível
+                                    showSnackbar('Nova versão disponível! Recarregue a página para atualizar.');
+                                }
+                            });
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Erro ao registrar Service Worker:', err);
+                        showSnackbar('Erro ao configurar modo offline. Algumas funcionalidades podem não funcionar corretamente.');
+                    });
+                    
+                // Verificar se há uma atualização quando a página é carregada
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    console.log('Service Worker atualizado!');
+                });
+            });
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,262 @@
+/* Variáveis Material Design */
+:root {
+    --mdc-theme-primary: #445963;
+    --mdc-theme-secondary: #03dac6;
+    --mdc-theme-background: #f5f5f5;
+    --mdc-theme-surface: #ffffff;
+    --mdc-theme-error: #b00020;
+    --mdc-theme-on-primary: #ffffff;
+    --mdc-theme-on-secondary: #000000;
+    --mdc-theme-on-surface: #000000;
+    --mdc-theme-on-error: #ffffff;
+    --camera-button-color: #F55E3D; /* Vermelho para câmera */
+    --gallery-button-color: #4CAF50; /* Verde para galeria */
+}
+
+/* Estilos gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    background-color: var(--mdc-theme-background);
+    color: var(--mdc-theme-on-surface);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tela de Splash */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.splash-content {
+    max-width: 500px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.splash-image {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 24px;
+}
+
+.splash-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.splash-text {
+    margin-bottom: 32px;
+}
+
+.splash-text h1 {
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.splash-text p {
+    color: #666;
+}
+
+.splash-button {
+    position: relative;
+}
+
+.splash-button .mdc-fab {
+    background-color: var(--mdc-theme-primary);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.splash-button .mdc-fab--extended {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    padding: 0;
+}
+
+.splash-button .mdc-fab--extended .mdc-fab__icon {
+    margin: 0;
+}
+
+.splash-button .mdc-fab--extended .mdc-fab__label {
+    display: none;
+}
+
+/* Conteúdo principal */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: white;
+}
+
+/* Container do aplicativo principal */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 16px;
+    justify-content: space-between;
+}
+
+/* Área de visualização/preview */
+.preview-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    background-color: white;
+    padding: 16px;
+    min-height: 60vh;
+}
+
+.preview-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Imagem de preview */
+.preview-image {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    display: block;
+    transition: filter 0.8s ease, transform 0.8s ease;
+}
+
+/* Efeito de transição durante o processamento */
+.preview-image.processing {
+    filter: blur(5px) saturate(150%);
+    transform: scale(0.95);
+}
+
+/* Botões de ação */
+.action-buttons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 16px 0;
+    margin-top: auto;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.action-button {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 8px;
+}
+
+.camera-button {
+    background-color: var(--camera-button-color);
+}
+
+.gallery-button {
+    background-color: var(--gallery-button-color);
+}
+
+.button-label {
+    font-size: 14px;
+    color: #666;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+/* Classes utilitárias */
+.hidden {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Estado desabilitado para botões */
+.mdc-fab--disabled {
+    background-color: #cccccc !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Estilo para o checkbox de salvar */
+.save-checkbox-container {
+    position: relative;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    max-width: fit-content;
+    margin: 12px auto;
+    width: auto;
+    align-self: center;
+}
+
+.save-checkbox {
+    color: var(--mdc-theme-primary);
+    margin-right: 4px;
+    --mdc-theme-secondary: #ffffff;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .preview-area {
+        min-height: 50vh;
+    }
+    
+    .action-button {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .splash-image {
+        max-width: 280px;
+    }
+    
+    .preview-image {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .preview-area {
+        min-height: 40vh;
+    }
+} 

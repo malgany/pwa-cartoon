@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapToon - Gerador de Ícones</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <style>
+        :root {
+            --mdc-theme-primary: #445963;
+            --mdc-theme-secondary: #03dac6;
+        }
+        
+        body {
+            font-family: Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            margin-bottom: 24px;
+        }
+        
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .instructions {
+            background-color: white;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        
+        .icon-container {
+            background-color: white;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+    </style>
+</head>
+<body class="mdc-typography">
+    <div class="header">
+        <h1 class="mdc-typography--headline4">SnapToon - Gerador de Ícones</h1>
+        <p class="mdc-typography--body1">Gere ícones para o app SnapToon</p>
+    </div>
+    
+    <div class="instructions mdc-elevation--z1">
+        <h2 class="mdc-typography--headline6">Instruções:</h2>
+        <ol class="mdc-typography--body2">
+            <li>Clique nos botões abaixo para gerar ícones para o SnapToon</li>
+            <li>Clique com o botão direito sobre o ícone gerado e selecione "Salvar imagem como..."</li>
+            <li>Salve os ícones nas pastas apropriadas do projeto PWA</li>
+        </ol>
+    </div>
+    
+    <div class="icon-container mdc-elevation--z1">
+        <h2 class="mdc-typography--headline6">Ícone 192x192</h2>
+        <canvas id="canvas192" width="192" height="192"></canvas>
+        <button class="mdc-button mdc-button--raised" onclick="generateIcon(192)">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label">Gerar Ícone 192x192</span>
+        </button>
+    </div>
+    
+    <div class="icon-container mdc-elevation--z1">
+        <h2 class="mdc-typography--headline6">Ícone 512x512</h2>
+        <canvas id="canvas512" width="512" height="512"></canvas>
+        <button class="mdc-button mdc-button--raised" onclick="generateIcon(512)">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label">Gerar Ícone 512x512</span>
+        </button>
+    </div>
+    
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>
+        // Inicializa botões com efeito ripple
+        document.querySelectorAll('.mdc-button').forEach(button => {
+            mdc.ripple.MDCRipple.attachTo(button);
+        });
+        
+        function generateIcon(size) {
+            const canvas = document.getElementById(`canvas${size}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Limpar o canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Cores SnapToon
+            const primaryColor = '#445963';  // Cinza azulado
+            const secondaryColor = '#F55E3D'; // Vermelho (para o carro)
+            const surfaceColor = '#ffffff';   // Branco
+            
+            // Desenhar fundo com gradiente estilo SnapToon
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, primaryColor);
+            gradient.addColorStop(1, '#2D3B42');
+            
+            // Desenhar fundo
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Desenhar círculo central
+            ctx.fillStyle = surfaceColor;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Desenhar texto "ST" (SnapToon)
+            ctx.fillStyle = secondaryColor;
+            ctx.font = `bold ${size/4}px Roboto`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ST', size/2, size/2);
+            
+            // Material Design shadow effect
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = size/24;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = size/48;
+        }
+        
+        // Gerar ícones ao carregar a página
+        window.onload = function() {
+            generateIcon(192);
+            generateIcon(512);
+        };
+    </script>
+</body>
+</html> 
