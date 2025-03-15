@@ -164,7 +164,7 @@ body {
 /* Botões de ação */
 .action-buttons {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     padding: 16px 0;
     margin-top: auto;
@@ -177,8 +177,8 @@ body {
 }
 
 .action-button {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     margin-bottom: 8px;
 }
 
@@ -191,9 +191,9 @@ body {
 }
 
 .button-label {
-    font-size: 14px;
+    font-size: 16px;
     color: #666;
-    margin-top: 8px;
+    margin-top: 12px;
     font-weight: 500;
 }
 
@@ -212,11 +212,11 @@ body {
     pointer-events: none;
 }
 
-/* Estilo para o checkbox de salvar */
+/* Estilo para o botão de salvar */
 .save-checkbox-container {
     position: relative;
     z-index: 10;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 8px 16px;
     border-radius: 20px;
     display: flex;
@@ -233,6 +233,21 @@ body {
     color: var(--mdc-theme-primary);
     margin-right: 4px;
     --mdc-theme-secondary: #ffffff;
+}
+
+#save-device-button {
+    background-color: var(--mdc-theme-primary);
+    color: white;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.2px;
+    padding: 0 16px;
+    height: 36px;
+    border-radius: 18px;
+}
+
+#save-device-button:hover {
+    background-color: var(--mdc-theme-primary-dark, #2c3b42);
 }
 
 /* Responsividade */

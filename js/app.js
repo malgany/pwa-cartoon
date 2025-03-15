@@ -21,9 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Configuração do botão da câmera
     setupCameraButton();
-    
-    // Configuração do botão da galeria
-    setupGalleryButton();
 });
 
 // Função para compactar imagem
@@ -218,22 +215,6 @@ function setupCameraButton() {
     }
 }
 
-// Configuração do botão da galeria
-function setupGalleryButton() {
-    const galleryButton = document.getElementById('gallery-button');
-    
-    if (galleryButton) {
-        galleryButton.addEventListener('click', () => {
-            // Remove o checkbox de salvar se existir
-            removeSaveCheckbox();
-            
-            // Apenas mostra um snackbar informativo, conforme solicitado
-            // não implementa funcionalidade real
-            showSnackbar('Galeria do aplicativo será implementada em breve!');
-        });
-    }
-}
-
 // Função para mostrar um snackbar com mensagem
 function showSnackbar(message) {
     // Verifica se já existe um snackbar
@@ -347,7 +328,6 @@ function getCartoonImage(imageId) {
 // Função para habilitar/desabilitar os botões
 function toggleButtonsState(enabled) {
     const cameraButton = document.getElementById('camera-button');
-    const galleryButton = document.getElementById('gallery-button');
     
     if (cameraButton) {
         if (enabled) {
@@ -356,16 +336,6 @@ function toggleButtonsState(enabled) {
         } else {
             cameraButton.setAttribute('disabled', 'true');
             cameraButton.classList.add('mdc-fab--disabled');
-        }
-    }
-    
-    if (galleryButton) {
-        if (enabled) {
-            galleryButton.removeAttribute('disabled');
-            galleryButton.classList.remove('mdc-fab--disabled');
-        } else {
-            galleryButton.setAttribute('disabled', 'true');
-            galleryButton.classList.add('mdc-fab--disabled');
         }
     }
 }
@@ -387,151 +357,104 @@ function addSaveCheckbox(imageBase64) {
     const checkboxContainer = document.createElement('div');
     checkboxContainer.className = 'save-checkbox-container';
     
-    // Usa diretamente o HTML do Material Design para o checkbox
+    // Usa diretamente o HTML do Material Design para o checkbox e botão
     checkboxContainer.innerHTML = `
         <div class="mdc-form-field">
-            <div class="mdc-checkbox save-checkbox">
-                <input type="checkbox"
-                        class="mdc-checkbox__native-control"
-                        id="save-cartoon-checkbox"/>
-                <div class="mdc-checkbox__background">
-                    <svg class="mdc-checkbox__checkmark"
-                        viewBox="0 0 24 24">
-                        <path class="mdc-checkbox__checkmark-path"
-                                fill="none"
-                                d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                    </svg>
-                    <div class="mdc-checkbox__mixedmark"></div>
-                </div>
-                <div class="mdc-checkbox__ripple"></div>
-            </div>
-            <span id="save-checkbox-text" style="color: white; text-shadow: 0 0 3px rgba(0,0,0,0.7); margin-left: 8px;">Salvar?</span>
+            <button class="mdc-button mdc-button--raised" id="save-device-button">
+                <span class="mdc-button__ripple"></span>
+                <span class="mdc-button__label">Salvar no Dispositivo</span>
+            </button>
         </div>
     `;
     
-    // Adiciona o checkbox dentro do preview container, após a imagem
+    // Adiciona o container dentro do preview container, após a imagem
     const previewContainer = document.querySelector('.preview-container');
     if (previewContainer) {
-        // Garante que seja adicionado ao final do container
         previewContainer.appendChild(checkboxContainer);
     }
     
-    // Obter referência ao checkbox e ao texto
-    const checkbox = document.getElementById('save-cartoon-checkbox');
-    const checkboxText = document.getElementById('save-checkbox-text');
-    
-    // Adiciona o evento de checkbox
-    if (checkbox && checkboxText) {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                saveImageToGallery(imageBase64);
-                showSnackbar('Imagem salva na galeria!');
-                checkboxText.textContent = 'Salvo!';
-            } else {
-                removeImageFromGallery(imageBase64);
-                showSnackbar('Imagem removida da galeria!');
-                checkboxText.textContent = 'Salvar?';
+    // Adiciona o evento de clique no botão
+    const saveButton = document.getElementById('save-device-button');
+    if (saveButton) {
+        saveButton.addEventListener('click', async () => {
+            const saved = await saveImageToDevice(imageBase64);
+            if (saved) {
+                saveButton.textContent = 'Salvo!';
+                setTimeout(() => {
+                    saveButton.textContent = 'Salvar no Dispositivo';
+                }, 2000);
             }
         });
         
-        // Inicializa o checkbox Material Design
-        const mdcCheckbox = new mdc.checkbox.MDCCheckbox(document.querySelector('.save-checkbox'));
-        new mdc.formField.MDCFormField(document.querySelector('.mdc-form-field')).input = mdcCheckbox;
+        // Inicializa o botão Material Design
+        new mdc.ripple.MDCRipple(saveButton);
     }
 }
 
-// Função para salvar imagem na galeria (localStorage)
-function saveImageToGallery(imageBase64) {
+// Função para salvar imagem no dispositivo
+async function saveImageToDevice(imageBase64) {
     try {
-        // Obtém a galeria atual ou cria uma nova
-        let gallery = JSON.parse(localStorage.getItem('snaptoon_gallery')) || [];
+        // Remove o cabeçalho da string base64 se existir
+        const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
         
-        // Gera um ID único para a imagem
-        const imageId = 'img_' + Date.now();
+        // Converte base64 para Blob
+        const byteCharacters = atob(base64Data);
+        const byteArrays = [];
         
-        // Limita o número de imagens armazenadas para evitar exceder a cota
-        const MAX_GALLERY_IMAGES = 5; // Limita a 5 imagens
-        
-        // Se já atingimos o limite, remove a imagem mais antiga
-        if (gallery.length >= MAX_GALLERY_IMAGES) {
-            // Ordena por data (do mais antigo para o mais recente)
-            gallery.sort((a, b) => new Date(a.date) - new Date(b.date));
-            // Remove a imagem mais antiga
-            gallery.shift();
-            console.log('🗑️ [Frontend] Imagem mais antiga removida para liberar espaço');
+        for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+            const slice = byteCharacters.slice(offset, offset + 1024);
+            const byteNumbers = new Array(slice.length);
+            
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
         }
         
-        // Adiciona a nova imagem
-        gallery.push({
-            id: imageId,
-            data: imageBase64,
-            date: new Date().toISOString()
-        });
+        const blob = new Blob(byteArrays, { type: 'image/jpeg' });
         
         try {
-            // Tenta salvar a galeria atualizada
-            localStorage.setItem('snaptoon_gallery', JSON.stringify(gallery));
-            console.log(`💾 [Frontend] Imagem salva na galeria local com ID: ${imageId}`);
-            return imageId;
-        } catch (storageError) {
-            // Se ainda falhar por falta de espaço, remove imagens até conseguir salvar
-            console.warn('⚠️ [Frontend] Erro de armazenamento, tentando liberar espaço:', storageError);
-            
-            // Enquanto houver imagens e ainda não conseguir salvar
-            while (gallery.length > 1) {
-                // Remove a imagem mais antiga e tenta novamente
-                gallery.shift();
-                try {
-                    localStorage.setItem('snaptoon_gallery', JSON.stringify(gallery));
-                    console.log('🗑️ [Frontend] Removidas imagens antigas para liberar espaço');
-                    showSnackbar('Algumas imagens antigas foram removidas para liberar espaço');
-                    return imageId;
-                } catch (e) {
-                    // Continua o loop se ainda não funcionar
-                    if (gallery.length <= 1) {
-                        throw new Error('Não foi possível liberar espaço suficiente');
-                    }
-                }
+            // Verifica se o navegador suporta a API
+            if ('showSaveFilePicker' in window) {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: `snaptoon_${Date.now()}.jpg`,
+                    types: [{
+                        description: 'Imagem JPEG',
+                        accept: { 'image/jpeg': ['.jpg', '.jpeg'] }
+                    }]
+                });
+                
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                
+                console.log('✅ [Frontend] Imagem salva no dispositivo com sucesso!');
+                showSnackbar('Imagem salva no dispositivo!');
+                return true;
+            } else {
+                // Fallback para navegadores que não suportam a API
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `snaptoon_${Date.now()}.jpg`;
+                link.click();
+                URL.revokeObjectURL(link.href);
+                
+                console.log('✅ [Frontend] Imagem baixada usando método alternativo');
+                showSnackbar('Imagem baixada para o dispositivo!');
+                return true;
             }
-            
-            // Se chegar aqui, não foi possível salvar
-            throw new Error('Não foi possível liberar espaço suficiente');
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.log('ℹ️ [Frontend] Usuário cancelou o salvamento');
+                return false;
+            }
+            throw error;
         }
     } catch (error) {
-        console.error('❌ [Frontend] Erro ao salvar na galeria:', error);
-        showSnackbar('Erro ao salvar imagem: Armazenamento cheio. Tente liberar espaço removendo imagens antigas.');
-        
-        // Desmarca o checkbox em caso de erro
-        const checkbox = document.getElementById('save-cartoon-checkbox');
-        if (checkbox) {
-            checkbox.checked = false;
-        }
-        
-        // Volta o texto para "Salvar?"
-        const checkboxText = document.getElementById('save-checkbox-text');
-        if (checkboxText) {
-            checkboxText.textContent = 'Salvar?';
-        }
-        
-        return null;
-    }
-}
-
-// Função para remover imagem da galeria
-function removeImageFromGallery(imageBase64) {
-    try {
-        // Obtém a galeria atual
-        let gallery = JSON.parse(localStorage.getItem('snaptoon_gallery')) || [];
-        
-        // Filtra para remover a imagem
-        gallery = gallery.filter(item => item.data !== imageBase64);
-        
-        // Salva a galeria atualizada
-        localStorage.setItem('snaptoon_gallery', JSON.stringify(gallery));
-        
-        console.log(`🗑️ [Frontend] Imagem removida da galeria local`);
-    } catch (error) {
-        console.error('❌ [Frontend] Erro ao remover da galeria:', error);
-        showSnackbar('Erro ao remover imagem: ' + error.message);
+        console.error('❌ [Frontend] Erro ao salvar imagem:', error);
+        showSnackbar('Erro ao salvar imagem: ' + error.message);
+        return false;
     }
 }
